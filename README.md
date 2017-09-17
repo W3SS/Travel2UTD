@@ -25,7 +25,7 @@ Python - For backend development
 
 4. Then type python -m install django-sslserver.
 
-5. Now type python manage.py runsslserver <IP_ADDRESS>:<PORT>
+5. Now type python manage.py runsslserver [IP_ADDRESS]:[PORT]
 
 **NOTE:** In dart/tempplates/index.html, please search for GOOGLE_MAPS_API_KEY in the file and replace it with your API_KEY credentials obtained at [https://console.developers.google.com/apis/credentials](https://console.developers.google.com/apis/credentials).
 

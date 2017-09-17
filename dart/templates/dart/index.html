@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>DART Tracker</title>
+    </head>
+    <body>
+        <button style="border:#000 1px solid;outline:none;background:none; padding:10px 10px;" onclick="repaintMarker()">Refresh</button>
+        <div id="map" style="width:100%;height:90%;"></div>
+    </body>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script>
+      var map;
+      var markers=[],infowindows = [];
+      function createMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 15,
+          center: {lat: 32.990893, lng: -96.763880 }
+        });
+        repaintMarker();
+      }
+      function repaintMarker() {
+        for (var i = 0; i < markers.length; i++ ) {
+            markers[i].setMap(null);
+        }
+        markers.length = 0;
+        infowindows = [];
+
+        jQuery.get('all').done(function(response){
+            response = JSON.parse(response);
+
+            for(var i = 0 ; i < response.length; i++) {
+                var pos = {lat: parseFloat(response[i].latitude), lng: parseFloat(response[i].longitude)};
+                var marker = new google.maps.Marker({
+                  position: new google.maps.LatLng(pos.lat, pos.lng),
+                  icon : 'https://www.odbus.in/images/od-fav.ico',
+                  map: map
+                });
+                markers.push(marker);
+                infowindows.push(new google.maps.InfoWindow({
+                  content: "Bus "+response[i].id
+                }));
+                (function(marker_idx){
+                    google.maps.event.addListener(markers[marker_idx], 'click', function() {
+                        for(m = 0 ; m < infowindows.length ; m++){
+                         infowindows[m].close()
+                        }
+                      infowindows[marker_idx].open(map, markers[marker_idx]);
+                    });
+                })(i);
+            }
+        });
+
+      }
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgQfYhFHNPMiqnn9OP1RGbZJ4YhSb4VVo&callback=createMap"
+    async defer></script>
+</html>
+
+

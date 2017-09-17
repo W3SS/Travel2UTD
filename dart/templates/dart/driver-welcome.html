@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <title>DART Driver Welcome</title>
+    </head>
+    <body>
+        <h1>Welcome!</h1>
+    </body>
+    {% load staticfiles %}
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script>
+        function create_bus() {
+            navigator.geolocation.getCurrentPosition(function(loc){
+                var latitude = ""+loc.coords.latitude
+                var longitude = ""+loc.coords.longitude
+                var timestamp = loc.timestamp
+                var id = document.querySelector("input[name='id']").value
+
+                console.log(id,latitude,longitude,timestamp);
+                jQuery.post('register',{
+                        'id' : id,
+                        'latitude' : latitude,
+                        'longitude' : longitude,
+                        'timestamp' : timestamp
+                }).done(function(response){
+                    document.body.innerHTML = "";
+                    jQuery("body").append("<h1>Welcome!</h1>")
+                    jQuery("title").text("DART Driver")
+                    watchLocation();
+                }).fail(function(response){
+                    alert(response.responseText)
+                })
+            });
+            return false;
+        }
+        function watchLocation() {
+            navigator.geolocation.watchPosition(function(loc){
+                var latitude = ""+loc.coords.latitude
+                var longitude = ""+loc.coords.longitude
+                var timestamp = loc.timestamp
+                var id = document.querySelector("input[name='id']").value
+                jQuery.post('update_location/'+id,{
+                        'latitude' : latitude,
+                        'longitude' : longitude,
+                        'timestamp' : timestamp
+                }).done(function(response){
+
+                })
+            })
+        }
+    </script>
+</html>

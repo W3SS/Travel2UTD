@@ -1,0 +1,91 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>DART Driver Sign-in</title>
+        <style>
+            #sign-in-form {
+                width:50%;margin:0px auto;margin-top:20px;padding:0;text-align:center;
+            }
+            #content input[name='id1'] {
+                padding: 10px 5px;width: 200px;border: #000 1px solid;
+            }
+            #sign-in {
+                padding: 11px 15px;background: #00adff;color: white;border: none;font-weight: bold;outline: none;
+            }
+        </style>
+    </head>
+    <body style="background-color: #e6e6e6;padding:0;margin:0;">
+        <div style="background-color:#e67325;padding:15px 0;text-align:center;">
+            <img src="http://www.utdallas.edu/websvcs/templates/gateway/images/logo-ie.png" />
+        </div>
+        <div id="content">
+            <form id="sign-in-form" onsubmit="return false">
+                <input type="number" name="id1" value="" placeholder="Bus Number" />
+                <button id="sign-in" onclick="create_bus()">Start the day</button>
+            </form>
+        </div>
+        <p style="background-color:#008542;color:white;position:absolute;bottom:0;left:0;right:0;text-align:center;padding:5px 0;margin:0;">Copyright © <b>The BROgrammers</b> 2017. </p>
+    </body>
+    {% load staticfiles %}
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+    <script>
+        var id,watch;
+        function create_bus() {
+            navigator.geolocation.getCurrentPosition(function(loc){
+                var latitude = ""+loc.coords.latitude
+                var longitude = ""+loc.coords.longitude
+                var timestamp = loc.timestamp
+                id = document.querySelector("input[name='id1']").value
+                jQuery.post('register',{
+                        'id' : id,
+                        'latitude' : latitude,
+                        'longitude' : longitude,
+                        'timestamp' : timestamp
+                }).done(function(response){
+                    jQuery("#content").empty().append("<div style='text-align:center;'><h3>Bus# "+id+" is now online. The bus can be tracked by UTD students <a target='_blank' href='https://"+window.location.host+"/bus/'> here</a>.</h3><button style='padding: 11px 15px;background: #00adff;color: white;border: none;font-weight: bold;outline: none;' onclick='delete_bus()'>End the day</button>")
+                    jQuery("title").text("DART Driver")
+                    watchLocation(id);
+                }).fail(function(response){
+                    alert(response.responseText)
+                    jQuery("#sign-in").removeAttr("disabled");
+                    jQuery("#loading").remove();
+                })
+            });
+            jQuery("#sign-in").attr("disabled",true);
+            jQuery("#content > form").append("<img id='loading' style='display:block;margin:0px auto;width:50px;height:50px;' src='https://media.giphy.com/media/QGcNyp19WFzXO/giphy.gif'/>")
+            return false;
+        }
+        function delete_bus() {
+            jQuery.ajax('delete_bus/'+id,{
+                'type' : 'DELETE'
+            }).done(function(response){
+                jQuery("#content").empty().append('<form id="sign-in-form" onsubmit="return false"><input type="number" name="id1" value="" placeholder="Bus Number" /> <button id="sign-in" onclick="create_bus()">Start the day</button></form>');
+                stop_watching();
+            });
+        }
+        function stop_watching() {
+            clearInterval(watch)
+        }
+        function watchLocation(id) {
+            var asked_loc = false;
+            watch = setInterval(function(){
+                if(asked_loc == false) {
+                    navigator.geolocation.getCurrentPosition(function(loc){
+                        asked_loc = false;
+                        var latitude = ""+loc.coords.latitude
+                        var longitude = ""+loc.coords.longitude
+                        var timestamp = loc.timestamp
+                        jQuery.post('update_location/'+id,{
+                                'latitude' : latitude,
+                                'longitude' : longitude,
+                                'timestamp' : timestamp
+                        }).done(function(response){})
+                    });
+                    asked_loc = true;
+                }
+            },5000);
+        }
+    </script>
+</html>

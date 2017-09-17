@@ -29,9 +29,9 @@ Python - For backend development
 
 **NOTE:** In dart/tempplates/index.html, please search for GOOGLE_MAPS_API_KEY in the file and replace it with your API_KEY credentials obtained at [https://console.developers.google.com/apis/credentials](https://console.developers.google.com/apis/credentials).
 
-**Authors**
+**Contributors**
 
-Anand Balan
-Adithya Ganapathy
-Hasanth Sista
+Anand Balan  
+Adithya Ganapathy  
+Hasanth Sista  
 

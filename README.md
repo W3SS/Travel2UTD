@@ -16,7 +16,7 @@ Django - The web framework used
 SQLite - The database used
 Python - For backend development
 
-**NOTE:** In index.html, please search for GOOGLE_MAPS_API_KEY and replace it with your API_KEY credentials.
+**NOTE:** In dart/tempplates/index.html, please search for GOOGLE_MAPS_API_KEY and replace it with your API_KEY credentials.
 
 **Authors**
 
